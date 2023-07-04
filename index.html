@@ -179,6 +179,7 @@
           comments = appComments;
         // получили данные и рендерим их в приложении
         comments = responseData.comments;
+        renderComments();
       });
     });
 
@@ -215,6 +216,7 @@
       if (inputNameElement.value === "" || commentsElement.value === "") {
         return false;
       };
+      inputNameElement.value = "";
 
       fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
         method: "POST",
@@ -222,15 +224,25 @@
           text: commentsElement.value,
           name:inputNameElement.value
         })
-      }).then((response) => {
-        response.json().then((responseData) => {
-          // получили данные и рендерим их в приложении
-          comments = responseData.comments;
-        });
-      });
-    
-      inputNameElement.value = "";
+      })
      
+    });
+    const fetchPromis = fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
+      method: "GET"
+    });
+
+    // подписываемся на успешное завершение запроса с помощью then
+    fetchPromis.then((response) => {
+      // Запускаем преобразовываем "сырые" данные от API в json формат
+      const jsonPromise = response.json();
+
+      // Подписываемся на результат преобразования
+      jsonPromise.then((responseData) => {
+        // получили данные и рендерим их в приложении
+        comments = responseData.comments;
+        renderComments();
+        
+      });
     });
     console.log("It works!");
   </script>
