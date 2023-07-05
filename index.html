@@ -155,36 +155,8 @@
       },
     ];
 
-
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
-      method: "GET"
-    });
-
-    // подписываемся на успешное завершение запроса с помощью then
-    fetchPromise.then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат
-      const jsonPromise = response.json();
-
-      // Подписываемся на результат преобразования
-      jsonPromise.then((responseData) => {
-        const appComments = responseData.comments.map((comment) =>{
-            return{
-              name:comment.author.name,
-              date: new Date(comment.date),
-              text: comment.text,
-              likes: comment.likes,
-              isLiked: false
-            }
-          });
-          comments = appComments;
-        // получили данные и рендерим их в приложении
-        comments = responseData.comments;
-        renderComments();
-      });
-    });
-
-    const renderUser = () => {
-         const usersHtml = comments.map((comment)=>{
+    const renderСomments = () => {
+         const commentsHtml = comments.map((comment)=>{
           return`<li  class="comment"  data-likeNumb="${comment.likesCounter}"  data-comment-text="<${comment. text}
   (${comment.name})">
           <div class="comment-header">
@@ -205,10 +177,40 @@
         </li>`
         })
         .join("");
-
+      
          newCommentElement.innerHTML = commentsHtml;
          initEventListeners();
+       
       };
+
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
+      method: "GET"
+    });
+
+    // подписываемся на успешное завершение запроса с помощью then
+    fetchPromise.then((response) => {
+      // Запускаем преобразовываем "сырые" данные от API в json формат
+      const jsonPromise = response.json();
+
+      // Подписываемся на результат преобразования
+      jsonPromise.then((responseData) => {
+        const appComments = responseData.comments.map((comment) =>{
+            return{
+              name:comment.name,
+              date: `${formatDate(myDate)}`,
+              text: comment.text,
+              likesCounter:0,
+              likesElement : false
+            }
+          });
+          comments = appComments;
+        // получили данные и рендерим их в приложении
+        comments = responseData.comments;
+       renderСomments();
+      });
+    });
+
+  
 
       // добавление нового коментария
     buttonElement.addEventListener("click", () => {
@@ -216,23 +218,24 @@
       if (inputNameElement.value === "" || commentsElement.value === "") {
         return false;
       };
-      inputNameElement.value = "";
+    
 
       fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
         method: "POST",
         body: JSON.stringify({
           text: commentsElement.value,
-          name:inputNameElement.value
+          name:inputNameElement.value,
+          data: `${formatDate(myDate)}`,
+          likesCounter:0,
+          likesElement : false
         })
-      })
-     
-    });
-    const fetchPromis = fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
-      method: "GET"
+      }).then(() => {
+        fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
+        method: "GET"
     });
 
     // подписываемся на успешное завершение запроса с помощью then
-    fetchPromis.then((response) => {
+    fetchPromise.then((response) => {
       // Запускаем преобразовываем "сырые" данные от API в json формат
       const jsonPromise = response.json();
 
@@ -240,10 +243,13 @@
       jsonPromise.then((responseData) => {
         // получили данные и рендерим их в приложении
         comments = responseData.comments;
-        renderComments();
-        
-      });
+         
     });
+    });
+      renderСomments();
+      inputNameElement.value = "";
+    });
+  });
     console.log("It works!");
   </script>
 </html>
