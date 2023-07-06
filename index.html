@@ -26,6 +26,9 @@
               <button id="likebutton" class="like-button"></button>
             </div>
           </div>
+          <div>
+            <button id="delete-button" class="delete-button">Удалить комментарий</button>
+          </div>
         </li>
         <li class="comment" data-likeNumb="75" data-comment-text="< Мне нравится как оформлена эта страница! ❤
   (Варвара Н.)">
@@ -43,6 +46,9 @@
               <span class="likes-counter">75</span>
               <button id="likebutton-active-like" class="like-button -active-like"></button>
             </div>
+          </div>
+          <div>
+            <button id="delete-button" class="delete-button">Удалить комментарий</button>
           </div>
         </li>
       </ul>
@@ -79,7 +85,7 @@
     const initEventListeners = () => {
       const commentElements = document.querySelectorAll(".comment");
       for (const commentElement of commentElements) {
-        commentElement.addEventListener("click", (event) => {
+        commentElement.addEventListener("click", () => {
           // редактирование коментария дз-11
           let textItem = commentElement.dataset.commentText;
         if (textItem) {
@@ -140,49 +146,69 @@
     
     let comments = [
       {
-        name:"Глеб Фокин",
+        author: {name:"Глеб Фокин"},
         text: "Это будет первый комментарий на этой странице", 
-        data: "12.02.22 12:18",
-        likesCounter:3,
-        likesElement : false
+        date: "12.02.22 12:18",
+        likes: 3,
+        isLiked : false
       },
       {
-        name:"Варвара Н.",
+        author: {name:"Варвара Н."},
         text: "Мне нравится как оформлена эта страница! ❤",
-        data: "13.02.22 19:22",
-        likesCounter:75,
-        likesElement : true
+        date: "13.02.22 19:22",
+        likes: 75,
+        isLiked : true
       },
     ];
 
     const renderСomments = () => {
-         const commentsHtml = comments.map((comment)=>{
-          return`<li  class="comment"  data-likeNumb="${comment.likesCounter}"  data-comment-text="<${comment. text}
-  (${comment.name})">
+         const commentsHtml = comments.map((comment, index)=>{
+          return`<li  class="comment"  data-likeNumb="${comment.likesCounter}"  data-comment-text="<${comment.text}
+  (${comment.author.name})">
           <div class="comment-header">
-            <div>${comment.name}</div>
-            <div>${comment.data}</div>
+            <div>${comment.author.name}</div>
+            <div>${comment.date}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${comment. text}
+              ${comment.text}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${comment.likesCounter}</span>
+              <span class="likes-counter">${comment.likes}</span>
               <button class="like-button"></button>
             </div>
+          </div>
+          <div>
+            <button data-index="${index}" class="delete-button">Удалить комментарий</button>
           </div>
         </li>`
         })
         .join("");
       
          newCommentElement.innerHTML = commentsHtml;
-         initEventListeners();
-       
-      };
 
+         const initDeleteButtonsListeners = () => {
+         const deleteButtonsElements = document.querySelectorAll(".delete-button");
+
+        for (const deleteButtonElement of deleteButtonsElements) {
+        deleteButtonElement.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const index = deleteButtonElement.dataset.index;
+          console.log(index);
+          comments.splice(index, 1);
+         
+          renderСomments();
+        });
+      }
+    };
+    initDeleteButtonsListeners();
+    initEventListeners();
+  };    
+      renderСomments();
+
+    const getFetchPromise = () => {
     const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
       method: "GET"
     });
@@ -196,11 +222,11 @@
       jsonPromise.then((responseData) => {
         const appComments = responseData.comments.map((comment) =>{
             return{
-              name:comment.name,
-              date: `${formatDate(myDate)}`,
+              name: comment.author.name,
+              date: new Date(comment.data),
               text: comment.text,
-              likesCounter:0,
-              likesElement : false
+              likes: comment.likes,
+              isLiked : false
             }
           });
           comments = appComments;
@@ -208,9 +234,11 @@
         comments = responseData.comments;
        renderСomments();
       });
-    });
+    })
+  };
+     getFetchPromise();
 
-  
+
 
       // добавление нового коментария
     buttonElement.addEventListener("click", () => {
@@ -219,36 +247,21 @@
         return false;
       };
     
-
       fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
         method: "POST",
         body: JSON.stringify({
-          text: commentsElement.value,
-          name:inputNameElement.value,
-          data: `${formatDate(myDate)}`,
-          likesCounter:0,
-          likesElement : false
+          name: inputNameElement.value,
+          text:  commentsElement.value,
+          date:  `${formatDate(myDate)}`,
+          likes: likesCounter,
+          isLiked : false,
         })
       }).then(() => {
-        fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
-        method: "GET"
-    });
-
-    // подписываемся на успешное завершение запроса с помощью then
-    fetchPromise.then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат
-      const jsonPromise = response.json();
-
-      // Подписываемся на результат преобразования
-      jsonPromise.then((responseData) => {
-        // получили данные и рендерим их в приложении
-        comments = responseData.comments;
-         
-    });
-    });
+      getFetchPromise();
       renderСomments();
-      inputNameElement.value = "";
     });
+    renderСomments();
+    inputNameElement.value = "";
   });
     console.log("It works!");
   </script>
