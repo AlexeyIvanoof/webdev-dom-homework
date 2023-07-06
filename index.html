@@ -162,7 +162,7 @@
     ];
 
     const renderСomments = () => {
-         const commentsHtml = comments.map((comment, index)=>{
+         const commentsHtml = comments.map((comment, id)=>{
           return`<li  class="comment"  data-likeNumb="${comment.likesCounter}"  data-comment-text="<${comment.text}
   (${comment.author.name})">
           <div class="comment-header">
@@ -181,7 +181,7 @@
             </div>
           </div>
           <div>
-            <button data-index="${index}" class="delete-button">Удалить комментарий</button>
+            <button data-id="${comment.id}" class="delete-button">Удалить комментарий</button>
           </div>
         </li>`
         })
@@ -195,10 +195,13 @@
         for (const deleteButtonElement of deleteButtonsElements) {
         deleteButtonElement.addEventListener("click", (event) => {
           event.stopPropagation();
-          const index = deleteButtonElement.dataset.index;
-          console.log(index);
-          comments.splice(index, 1);
-         
+          const id =  deleteButtonElement.dataset.id;
+          fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments" +id, {
+        method: "DELETE",
+      }).then(() => {
+      getFetchPromise();
+      renderСomments();
+    });
           renderСomments();
         });
       }
@@ -253,8 +256,6 @@
           name: inputNameElement.value,
           text:  commentsElement.value,
           date:  `${formatDate(myDate)}`,
-          likes: likesCounter,
-          isLiked : false,
         })
       }).then(() => {
       getFetchPromise();
