@@ -52,7 +52,8 @@
           </div>
         </li>
       </ul>
-      <div class="add-form">
+      <p id="load" class="load">...Подождите, список обновляется</p>
+      <div id="add-form" class="add-form">
         <input
           id="add-form-name"
           type="text"
@@ -70,6 +71,7 @@
           <button id="add-form-button" class="add-form-button">Написать</button>
         </div>
       </div>
+      <p id="loader" class="loader">...Добавляем комментарий</p>
     </div>
   </body>
 
@@ -79,8 +81,9 @@
     const newCommentElement = document.getElementById("container");
     const inputNameElement = document.getElementById("add-form-name");
     const commentsElement = document.getElementById("add-form-text");
-
-
+    const loadComments =  document.getElementById("load");
+    const loadComment =  document.getElementById("add-form");
+    const loader =  document.getElementById("loader");
     const commentElements = document.querySelectorAll(".comment");
     const initEventListeners = () => {
       const commentElements = document.querySelectorAll(".comment");
@@ -93,7 +96,7 @@
       };
         });
 
-        // активация лайка
+  // активация лайка
         const likeButton = commentElement.querySelector(".like-button");
         const likesCounter = commentElement.querySelector(".likes-counter");
         const dataLikeNumb = parseInt(commentElement.getAttribute("data-likeNumb"));
@@ -143,27 +146,13 @@
     };
     dateElement.textContent = formatDate(myDate);
 
-    
-    let comments = [
-      {
-        author: {name:"Глеб Фокин"},
-        text: "Это будет первый комментарий на этой странице", 
-        date: "12.02.22 12:18",
-        likes: 3,
-        isLiked : false
-      },
-      {
-        author: {name:"Варвара Н."},
-        text: "Мне нравится как оформлена эта страница! ❤",
-        date: "13.02.22 19:22",
-        likes: 75,
-        isLiked : true
-      },
-    ];
+// массив данных
+    let comments = [];
 
+// рендер функция
     const renderСomments = () => {
-         const commentsHtml = comments.map((comment, id)=>{
-          return`<li  class="comment"  data-likeNumb="${comment.likesCounter}"  data-comment-text="<${comment.text}
+         const commentsHtml = comments.map((comment, index)=>{
+          return`<li  class="comment"  data-likeNumb="${ comment.likes}"  data-comment-text="<${comment.text}
   (${comment.author.name})">
           <div class="comment-header">
             <div>${comment.author.name}</div>
@@ -181,7 +170,7 @@
             </div>
           </div>
           <div>
-            <button data-id="${comment.id}" class="delete-button">Удалить комментарий</button>
+            <button data-index="${index}" class="delete-button">Удалить комментарий</button>
           </div>
         </li>`
         })
@@ -189,19 +178,17 @@
       
          newCommentElement.innerHTML = commentsHtml;
 
+//кнопка удаления комментария
          const initDeleteButtonsListeners = () => {
          const deleteButtonsElements = document.querySelectorAll(".delete-button");
 
         for (const deleteButtonElement of deleteButtonsElements) {
         deleteButtonElement.addEventListener("click", (event) => {
           event.stopPropagation();
-          const id =  deleteButtonElement.dataset.id;
-          fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments" +id, {
-        method: "DELETE",
-      }).then(() => {
-      getFetchPromise();
-      renderСomments();
-    });
+          const index = deleteButtonElement.dataset.index;
+          console.log(index);
+          comments.splice(index, 1);
+
           renderСomments();
         });
       }
@@ -211,18 +198,15 @@
   };    
       renderСomments();
 
+// отправляем данные на сервер (метод GET)
     const getFetchPromise = () => {
-    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
+      return fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
       method: "GET"
-    });
-
-    // подписываемся на успешное завершение запроса с помощью then
-    fetchPromise.then((response) => {
-      // Запускаем преобразовываем "сырые" данные от API в json формат
-      const jsonPromise = response.json();
-
-      // Подписываемся на результат преобразования
-      jsonPromise.then((responseData) => {
+    })
+   .then((response) => {
+    loadComments.textContent = "";
+    return response.json()
+   .then((responseData) => {
         const appComments = responseData.comments.map((comment) =>{
             return{
               name: comment.author.name,
@@ -231,25 +215,26 @@
               likes: comment.likes,
               isLiked : false
             }
-          });
-          comments = appComments;
-        // получили данные и рендерим их в приложении
+          });  
+        comments = appComments;
         comments = responseData.comments;
-       renderСomments();
+        renderСomments();
       });
-    })
+    });
   };
      getFetchPromise();
 
 
 
-      // добавление нового коментария
+// добавление нового коментария
+    loader.textContent = "";
     buttonElement.addEventListener("click", () => {
-  
       if (inputNameElement.value === "" || commentsElement.value === "") {
         return false;
       };
-    
+// ответ от сервера (метод POST)
+      loadComment.style.display = "none"; 
+      loader.textContent = "...Добавляем комментарий";
       fetch("https://wedev-api.sky.pro/api/v1/:aleksey-ivanov/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -257,10 +242,19 @@
           text:  commentsElement.value,
           date:  `${formatDate(myDate)}`,
         })
-      }).then(() => {
-      getFetchPromise();
-      renderСomments();
-    });
+      }) 
+        .then((response) => {
+          return response.json();
+        })
+      
+        .then(() => {
+         return getFetchPromise();
+        })
+  
+        .then((data) => {
+          loadComment.style.display = "block";
+          loader.textContent = "";
+        });
     renderСomments();
     inputNameElement.value = "";
   });
