@@ -74,7 +74,7 @@
       <p id="loader" class="loader">...Добавляем комментарий</p>
     </div>
   </body>
-
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     "use strict";
     const buttonElement = document.getElementById("add-form-button");
@@ -241,12 +241,18 @@
           name: inputNameElement.value,
           text:  commentsElement.value,
           date:  `${formatDate(myDate)}`,
+          forceError: true,
         })
       }) 
         .then((response) => {
+          if (response.status === 500) {
+            throw new Error("Сервер перегружен!")
+          }
+          if(response.status === 400){
+            throw new Error("Введите не мение трех символов!") 
+          }
           return response.json();
-        })
-      
+        })      
         .then(() => {
          return getFetchPromise();
         })
@@ -254,9 +260,21 @@
         .then((data) => {
           loadComment.style.display = "block";
           loader.textContent = "";
+          inputNameElement.value = "";
+          commentsElement.value = "";
+        })
+        .catch((error) => {
+          loadComment.style.display = "block";
+          loader.textContent = "";
+          Swal.fire({
+            icon:"error",
+            title:"Упс",
+            text: "Введите не мение трех символов!"
+          }) 
+          console.warn(error);
         });
+
     renderСomments();
-    inputNameElement.value = "";
   });
     console.log("It works!");
   </script>
