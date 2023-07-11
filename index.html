@@ -223,9 +223,7 @@
     });
   };
      getFetchPromise();
-
-
-
+  
 // добавление нового коментария
     loader.textContent = "";
     buttonElement.addEventListener("click", () => {
@@ -246,7 +244,7 @@
       }) 
         .then((response) => {
           if (response.status === 500) {
-            throw new Error("Сервер перегружен!")
+            throw ("Сервер перегружен!")
           }
           if(response.status === 400){
             throw new Error("Введите не мение трех символов!") 
@@ -266,11 +264,19 @@
         .catch((error) => {
           loadComment.style.display = "block";
           loader.textContent = "";
+          if(error.message){
+            error.message ===("Введите не мение трех символов!");
+            Swal.fire({
+            icon:"error",
+            title:"Неверный формат ввода данных",
+            text: "Введите не мение трех символов!"
+          })
+          }else{
           Swal.fire({
             icon:"error",
             title:"Упс",
-            text: "Введите не мение трех символов!"
-          }) 
+            text: "Сервер перегружен!"
+          })} 
           console.warn(error);
         });
 
