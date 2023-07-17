@@ -146,3 +146,21 @@ body {
   .add-form-button:hover {
     opacity: 0.9;
   }
+  .add-form-enter{
+    display: flex;
+    flex-direction: column;
+  }
+  .text-enter{
+    font-size: 18;
+    font-family: Helvetica;
+    border-radius: 8px;
+    border: none;
+    padding: 20px 22px;
+    margin-top: 12px;
+  }
+  .reg-enter{
+    display: flex;
+    justify-content: center;
+    color: #ffffff;
+    margin-top: 12px;
+  }

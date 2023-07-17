@@ -1,6 +1,7 @@
 import{getComments} from "./app.js"
 import{postComments} from "./app.js"
 import{formatDate} from "./assistant.js"
+import{renderLogin} from "./login.js"
 
 const buttonElement = document.getElementById("add-form-button");
 const newCommentElement = document.getElementById("container");
@@ -9,7 +10,7 @@ const commentsElement = document.getElementById("add-form-text");
 const loadComments =  document.getElementById("load");
 const loadComment =  document.getElementById("add-form");
 const loader =  document.getElementById("loader");
-const commentElements = document.querySelectorAll(".comment");
+//const commentElements = document.querySelectorAll(".comment");
 const initEventListeners = () => {
   const commentElements = document.querySelectorAll(".comment");
   for (const commentElement of commentElements) {
@@ -128,6 +129,7 @@ getComments()
 
 };
  getFetchPromise();
+ renderLogin();
 
 // добавление нового коментария
 loader.textContent = "";
