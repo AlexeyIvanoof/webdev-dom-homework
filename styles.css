@@ -164,3 +164,14 @@ body {
     color: #ffffff;
     margin-top: 12px;
   }
+ .regUsers{
+  display: flex;
+    justify-content: center;
+    color: #ffffff;
+    margin-top: 12px;
+ }
+ .reg-button{
+  color: #aeccda;
+  background-color:#202020 ;
+  border-radius:20cqmax;
+ }

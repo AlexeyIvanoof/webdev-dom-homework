@@ -1,5 +1,5 @@
 import {login, setToken, token} from "./app.js"
- 
+
 export const renderLogin = () => {
     const appElement = document.getElementById("app");
     const loginHtml = 
@@ -33,6 +33,7 @@ const passwordInputElement = document.getElementById("password-input");
 
 
 buttonElement.addEventListener("click", () => {
+  console.log("!")
 login({
     login:loginInputElemtnt.value,
     password:passwordInputElement.value,

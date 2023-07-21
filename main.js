@@ -2,6 +2,8 @@ import{getComments} from "./app.js"
 import{postComments} from "./app.js"
 import{formatDate} from "./assistant.js"
 import{renderLogin} from "./login.js"
+//import{renderRegistr} from "./reg.js"
+//import{renderPage} from "./render.js"
 
 const buttonElement = document.getElementById("add-form-button");
 const newCommentElement = document.getElementById("container");
@@ -56,6 +58,7 @@ const myDate = new Date();
 formatDate();
 dateElement.textContent = formatDate(myDate);
 
+
 // массив данных
 let comments = [];
 
@@ -98,7 +101,6 @@ const renderСomments = () => {
       const index = deleteButtonElement.dataset.index;
       console.log(index);
       comments.splice(index, 1);
-
       renderСomments();
     });
   }
@@ -107,6 +109,13 @@ initDeleteButtonsListeners();
 initEventListeners();
 };    
   renderСomments();
+  
+   //Авторизация
+   const authorization = document.getElementById("regUser");
+   authorization.addEventListener("click", () => {
+    renderLogin()
+   });
+  
 
 // отправляем данные на сервер (метод GET)
 const getFetchPromise = () => {
@@ -125,11 +134,11 @@ getComments()
     comments = appComments;
     comments = responseData.comments;
     renderСomments();
+
   });
 
 };
  getFetchPromise();
- renderLogin();
 
 // добавление нового коментария
 loader.textContent = "";
