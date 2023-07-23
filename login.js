@@ -1,7 +1,9 @@
 import {login, setToken, token} from "./app.js"
+import {renderPage} from "./render.js"
 
 export const renderLogin = () => {
-    const appElement = document.getElementById("app");
+  const pageElement = document.getElementById("container");
+  //const appElement = document.getElementById("app");
     const loginHtml = 
     `<div class="container">
     <div class="add-form">
@@ -25,23 +27,27 @@ export const renderLogin = () => {
     </div>
 </div>`;
 
-appElement.innerHTML = loginHtml;
+//appElement.innerHTML = loginHtml;
+pageElement.innerHTML = loginHtml;
 
 const buttonElement = document.getElementById("login-button");
-const loginInputElemtnt = document.getElementById("login-input");
+const loginInputElement = document.getElementById("login-input");
 const passwordInputElement = document.getElementById("password-input");
 
 
 buttonElement.addEventListener("click", () => {
   console.log("!")
 login({
-    login:loginInputElemtnt.value,
+    login:loginInputElement.value,
     password:passwordInputElement.value,
 }).then((responseData) => {
     console.log(responseData);
     console.log(token);
     setToken(responseData.user.token);
     console.log(token);
+}).then(() => {
+  return   renderPage()
 });
+
 });
 }

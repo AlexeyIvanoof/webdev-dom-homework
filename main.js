@@ -2,8 +2,12 @@ import{getComments} from "./app.js"
 import{postComments} from "./app.js"
 import{formatDate} from "./assistant.js"
 import{renderLogin} from "./login.js"
+import { userComment } from "./render.js"
 //import{renderRegistr} from "./reg.js"
 //import{renderPage} from "./render.js"
+
+
+
 
 const buttonElement = document.getElementById("add-form-button");
 const newCommentElement = document.getElementById("container");
@@ -12,8 +16,8 @@ const commentsElement = document.getElementById("add-form-text");
 const loadComments =  document.getElementById("load");
 const loadComment =  document.getElementById("add-form");
 const loader =  document.getElementById("loader");
-//const commentElements = document.querySelectorAll(".comment");
-const initEventListeners = () => {
+
+export const initEventListeners = () => {
   const commentElements = document.querySelectorAll(".comment");
   for (const commentElement of commentElements) {
     commentElement.addEventListener("click", () => {
@@ -60,10 +64,10 @@ dateElement.textContent = formatDate(myDate);
 
 
 // массив данных
-let comments = [];
+ export let comments = [];
 
 // рендер функция
-const renderСomments = () => {
+export const renderСomments = () => {
      const commentsHtml = comments.map((comment, index)=>{
       return`<li  class="comment"  data-likeNumb="${ comment.likes}"  data-comment-text="<${comment.text}
 (${comment.author.name})">
@@ -113,7 +117,7 @@ initEventListeners();
    //Авторизация
    const authorization = document.getElementById("regUser");
    authorization.addEventListener("click", () => {
-    renderLogin()
+    renderLogin();
    });
   
 
@@ -133,55 +137,12 @@ getComments()
       });  
     comments = appComments;
     comments = responseData.comments;
-    renderСomments();
-
+    renderСomments()
   });
 
 };
  getFetchPromise();
 
 // добавление нового коментария
-loader.textContent = "";
-buttonElement.addEventListener("click", () => {
-  if (inputNameElement.value === "" || commentsElement.value === "") {
-    return false;
-  };
-// ответ от сервера (метод POST)
-  loadComment.style.display = "none"; 
-  loader.textContent = "...Добавляем комментарий";
-  postComments({
-    nam:inputNameElement.value,
-    text: commentsElement.value, 
-    date: `${formatDate(myDate)}`})
-    .then(() => {
-     return getFetchPromise();
-    })
-
-    .then((data) => {
-      loadComment.style.display = "block";
-      loader.textContent = "";
-      inputNameElement.value = "";
-      commentsElement.value = "";
-    })
-    .catch((error) => {
-      loadComment.style.display = "block";
-      loader.textContent = "";
-      if(error.message){
-        error.message ===("Введите не мение трех символов!");
-        Swal.fire({
-        icon:"error",
-        title:"Неверный формат ввода данных",
-        text: "Введите не мение трех символов!"
-      })
-      }else{
-      Swal.fire({
-        icon:"error",
-        title:"Упс",
-        text: "Сервер перегружен!"
-      })} 
-      console.warn(error);
-    });
-
-renderСomments();
-});
+userComment ()
 console.log("It works!");

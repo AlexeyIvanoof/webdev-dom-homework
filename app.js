@@ -35,7 +35,7 @@ export function postComments({nam,text,date}){
           return response.json();
         })      
 };
-export function login(login, password){
+export function login({login, password}){
   return fetch(userLoginURL, {
       method: "POST",
       body: JSON.stringify({
@@ -54,7 +54,7 @@ export function login(login, password){
       })      
 };
 
-export function regUsers(login, password,name){
+export function regUsers({login, password,name}){
   return fetch(userURL, {
       method: "POST",
       body: JSON.stringify({
