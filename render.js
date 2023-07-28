@@ -1,7 +1,9 @@
-/*/import { getComments } from "./app.js";
+
 import { initEventListeners } from "./main.js";
 import { comments } from "./main.js";
-
+import { initDeleteButtonsListeners } from "./main.js";
+import { postComments } from "./app.js";
+// рендер страницы после авторизайии
 export const renderPage = () => {
     const pageElement = document.getElementById("container");
     const commentsHtml = comments.map((comment, index)=>{
@@ -47,55 +49,45 @@ export const renderPage = () => {
       <button id="add-form-button" class="add-form-button">Написать</button>
     </div>`
 
-//кнопка удаления комментария
-     const initDeleteButtonsListeners = () => {
-     const deleteButtonsElements = document.querySelectorAll(".delete-button");
 
-    for (const deleteButtonElement of deleteButtonsElements) {
-    deleteButtonElement.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const index = deleteButtonElement.dataset.index;
-      console.log(index);
-      comments.splice(index, 1);
-    });
-  }
-};
-initDeleteButtonsListeners();
-initEventListeners();  
+    initDeleteButtonsListeners();
+    initEventListeners();  
 
     pageElement.innerHTML = commentsHtml+addHtml ;
+  }
 
 
-    const buttonElement = document.getElementById("add-form-button");
-    const inputNameElement = document.getElementById("add-form-name");
-    const commentsElement = document.getElementById("add-form-text");
-    const loadComments =  document.getElementById("load");
-    const loadComment =  document.getElementById("add-form");
-    
+const buttonElement = document.getElementById("add-form-button");
+const inputNameElement = document.getElementById("add-form-name");
+const commentsElement = document.getElementById("add-form-text");
+const loadComments =  document.getElementById("load");
+const loadComment =  document.getElementById("add-form");
 
 
-  const getFetchPromise = () => {
-    getComments()
-    .then((responseData) => {
-        loadComments.textContent = "";
-        const appComments = responseData.comments.map((comment) =>{
-            return{
-              name: comment.author.name,
-              date: new Date(comment.data),
-              text: comment.text,
-              likes: comment.likes,
-              isLiked : false
-            }
-          });  
-        comments = appComments;
-        comments = responseData.comments;
-        renderPage();
-      });
-    
-    };
-     getFetchPromise();
-
+/*///рендер поля ввода коментария
+export const renderInputComment = (pageElements) => {
+   pageElements = document.getElementById("input-comment");
+     const inputHtml = 
+    `<div id="add-form" class="add-form">
+    <input
+      id="add-form-name"
+      type="text"
+      class="add-form-name"
+      placeholder="Введите ваше имя"
+    />
+    <textarea
+      id="add-form-text"
+      type="textarea"
+      class="add-form-text"
+      placeholder="Введите ваш коментарий"
+      rows="4"
+    ></textarea>
+    <div class="add-form-row">
+      <button id="add-form-button" class="add-form-button">Написать</button>
+    </div>`;
 }
+pageElements.innerHTML = inputHtml;/*/
+
 
 export function userComment () {
 loader.textContent = "";
@@ -141,9 +133,9 @@ buttonElement.addEventListener("click", () => {
 
 
 })
-}/*/
+}
 
-import { initEventListeners } from "./main.js";
+/*/import { initEventListeners } from "./main.js";
 import { comments } from "./main.js";
 import { renderСomments } from "./main.js";
 export const renderPage = () => {
@@ -213,4 +205,4 @@ export const renderPage = () => {
 
 export function userComment() {
   loader.textContent = "";
-}
+}/*/

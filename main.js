@@ -1,5 +1,4 @@
 import{getComments} from "./app.js"
-import{postComments} from "./app.js"
 import{formatDate} from "./assistant.js"
 import{renderLogin} from "./login.js"
 import { userComment } from "./render.js"
@@ -7,15 +6,9 @@ import { userComment } from "./render.js"
 //import{renderPage} from "./render.js"
 
 
-
-
-const buttonElement = document.getElementById("add-form-button");
 const newCommentElement = document.getElementById("container");
-const inputNameElement = document.getElementById("add-form-name");
-const commentsElement = document.getElementById("add-form-text");
 const loadComments =  document.getElementById("load");
-const loadComment =  document.getElementById("add-form");
-const loader =  document.getElementById("loader");
+
 
 export const initEventListeners = () => {
   const commentElements = document.querySelectorAll(".comment");
@@ -55,6 +48,20 @@ export const initEventListeners = () => {
   }
 };
 initEventListeners();
+
+//кнопка удаления комментария
+  export const initDeleteButtonsListeners = () => {
+  const deleteButtonsElements = document.querySelectorAll(".delete-button");
+
+ for (const deleteButtonElement of deleteButtonsElements) {
+ deleteButtonElement.addEventListener("click", (event) => {
+   event.stopPropagation();
+   const index = deleteButtonElement.dataset.index;
+   console.log(index);
+   comments.splice(index, 1);
+ });
+}
+};
 
 //формат даты
 const dateElement = document.getElementById("date");
@@ -142,7 +149,6 @@ getComments()
 
 };
  getFetchPromise();
-
 // добавление нового коментария
 userComment ()
 console.log("It works!");

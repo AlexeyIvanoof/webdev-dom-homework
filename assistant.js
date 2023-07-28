@@ -17,3 +17,5 @@ export function formatDate() {
         return `${data}.${month}.${date.getFullYear().toString().substr(-2)} ${hour}:${minute}`;
       };
 }
+
+
