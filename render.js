@@ -1,9 +1,11 @@
-
-import { initEventListeners } from "./main.js";
+import { postComments,deleteComment } from "./app.js";
+import { formatDate } from "./main.js";
+import { getFetchPromise } from "./main.js";
 import { comments } from "./main.js";
-import { initDeleteButtonsListeners } from "./main.js";
-import { postComments } from "./app.js";
-// рендер страницы после авторизайии
+import { setLoginName } from "./app.js";
+
+// рендер страницы после авторизации
+
 export const renderPage = () => {
     const pageElement = document.getElementById("container");
     const commentsHtml = comments.map((comment, index)=>{
@@ -30,7 +32,7 @@ export const renderPage = () => {
     </li>`
     })
     .join("");
-    const addHtml =
+     const addHtml =
     `<div id="add-form" class="add-form">
     <input
       id="add-form-name"
@@ -49,49 +51,93 @@ export const renderPage = () => {
       <button id="add-form-button" class="add-form-button">Написать</button>
     </div>`
 
-
-    initDeleteButtonsListeners();
-    initEventListeners();  
-
     pageElement.innerHTML = commentsHtml+addHtml ;
+
+    const buttonElement = document.getElementById("add-form-button");
+    const inputNameElement = document.getElementById("add-form-name");
+    const commentsElement = document.getElementById("add-form-text");
+    const loadComment =  document.getElementById("add-form");
+    const loader =  document.getElementById("loader");
+    const myDate = new Date();
+
+    const initEventListeners = () => {
+      const commentElements = document.querySelectorAll(".comment");
+      for (const commentElement of commentElements) {
+        commentElement.addEventListener("click", () => {
+    
+    // редактирование коментария 
+          let textItem = commentElement.dataset.commentText;
+        if (textItem) {
+        document.querySelector('#add-form-text').value = textItem;
+      };
+        });
+    
+    // активация лайка
+        const likeButton = commentElement.querySelector(".like-button");
+        const likesCounter = commentElement.querySelector(".likes-counter");
+        const dataLikeNumb = parseInt(commentElement.getAttribute("data-likeNumb"));
+    
+        let liked = false;
+        let likes = dataLikeNumb;
+    
+        if (likeButton.classList.contains("-active-like")) {
+          liked = true;
+        }
+    
+        likeButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+          if (liked) {
+            likes--;
+          } else {
+            likes++;
+          }
+          liked = !liked;
+          likesCounter.textContent = likes;
+          commentElement.setAttribute("data-likeNumb", likes);
+          likeButton.classList.toggle("-active-like");
+        });
+      }
+    };
+    initEventListeners();
+  
+//кнопка удаления комментария
+     const initDeleteButtonsListeners = () => {
+     const deleteButtonsElements = document.querySelectorAll(".delete-button");
+
+    for (const deleteButtonElement of deleteButtonsElements) {
+    deleteButtonElement.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const index = deleteButtonElement.dataset.index;
+      console.log(index);
+      comments.splice(index, 1);
+
+      renderPage();
+    });
   }
+};
+initDeleteButtonsListeners();
+initEventListeners();
 
+/*/const initDeleteButtonsListeners = () => {
+  const deleteButtonsElements = document.querySelectorAll(".delete-button");
 
-const buttonElement = document.getElementById("add-form-button");
-const inputNameElement = document.getElementById("add-form-name");
-const commentsElement = document.getElementById("add-form-text");
-const loadComments =  document.getElementById("load");
-const loadComment =  document.getElementById("add-form");
-
-
-/*///рендер поля ввода коментария
-export const renderInputComment = (pageElements) => {
-   pageElements = document.getElementById("input-comment");
-     const inputHtml = 
-    `<div id="add-form" class="add-form">
-    <input
-      id="add-form-name"
-      type="text"
-      class="add-form-name"
-      placeholder="Введите ваше имя"
-    />
-    <textarea
-      id="add-form-text"
-      type="textarea"
-      class="add-form-text"
-      placeholder="Введите ваш коментарий"
-      rows="4"
-    ></textarea>
-    <div class="add-form-row">
-      <button id="add-form-button" class="add-form-button">Написать</button>
-    </div>`;
+ for (const deleteButtonElement of deleteButtonsElements) {
+ deleteButtonElement.addEventListener("click", (event) => {
+   event.stopPropagation();
+   const id =  deleteButtonElement.dataset.id;
+   deleteComment({id}).then(() => {
+     getFetchPromise();
+});
+ });
 }
-pageElements.innerHTML = inputHtml;/*/
-
-
-export function userComment () {
+};
+initDeleteButtonsListeners();
+initEventListeners();/*/
+ 
+//добавляем новый комментарий
 loader.textContent = "";
 buttonElement.addEventListener("click", () => {
+ 
   if (inputNameElement.value === "" || commentsElement.value === "") {
     return false;
   };
@@ -103,10 +149,9 @@ buttonElement.addEventListener("click", () => {
     text: commentsElement.value, 
     date: `${formatDate(myDate)}`})
     .then(() => {
-     return getFetchPromise();
     })
 
-    .then((data) => {
+    .then(() => {
       loadComment.style.display = "block";
       loader.textContent = "";
       inputNameElement.value = "";
@@ -130,79 +175,9 @@ buttonElement.addEventListener("click", () => {
       })} 
       console.warn(error);
     });
-
-
-})
-}
-
-/*/import { initEventListeners } from "./main.js";
-import { comments } from "./main.js";
-import { renderСomments } from "./main.js";
-export const renderPage = () => {
-  const pageElement = document.getElementById("container");
-  const commentsHtml = comments
-    .map(
-      (comment, index) => `
-      <li class="comment" data-likeNumb="${comment.likes}" data-comment-text="${comment.text} (${comment.author.name})">
-        <div class="comment-header">
-          <div>${comment.author.name}</div>
-          <div>${comment.date}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${comment.text}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-        <div>
-          <button data-index="${index}" class="delete-button">Удалить комментарий</button>
-        </div>
-      </li>`
-    )
-    .join("");
-    
-  const addHtml = `
-    <div id="add-form" class="add-form">
-      <input
-        id="add-form-name"
-        type="text"
-        class="add-form-name"
-        placeholder="Введите ваше имя"
-      />
-      <textarea
-        id="add-form-text"
-        type="textarea"
-        class="add-form-text"
-        placeholder="Введите ваш коментарий"
-        rows="4"
-      ></textarea>
-      <div class="add-form-row">
-        <button id="add-form-button" class="add-form-button">Написать</button>
-      </div>
-    </div>`;
-
-  pageElement.innerHTML = commentsHtml + addHtml;
-
-  const deleteButtonsElements = document.querySelectorAll(".delete-button");
-
-  for (const deleteButtonElement of deleteButtonsElements) {
-    deleteButtonElement.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const index = deleteButtonElement.dataset.index;
-      comments.splice(index, 1);
-      renderСomments();
-      renderPage();
-    });
-  }
   
-  initEventListeners();
-};
+});
+};    
 
-export function userComment() {
-  loader.textContent = "";
-}/*/
+
+

@@ -1,80 +1,49 @@
 import{getComments} from "./app.js"
-import{formatDate} from "./assistant.js"
 import{renderLogin} from "./login.js"
-import { userComment } from "./render.js"
 //import{renderRegistr} from "./reg.js"
 //import{renderPage} from "./render.js"
 
 
 const newCommentElement = document.getElementById("container");
 const loadComments =  document.getElementById("load");
+const loader =  document.getElementById("loader");
+const buttonAuthorization = document.getElementById("regUser");
 
-
-export const initEventListeners = () => {
-  const commentElements = document.querySelectorAll(".comment");
-  for (const commentElement of commentElements) {
-    commentElement.addEventListener("click", () => {
-      // редактирование коментария дз-11
-      let textItem = commentElement.dataset.commentText;
-    if (textItem) {
-    document.querySelector('#add-form-text').value = textItem;
-  };
-    });
-
-// активация лайка
-    const likeButton = commentElement.querySelector(".like-button");
-    const likesCounter = commentElement.querySelector(".likes-counter");
-    const dataLikeNumb = parseInt(commentElement.getAttribute("data-likeNumb"));
-
-    let liked = false;
-    let likes = dataLikeNumb;
-
-    if (likeButton.classList.contains("-active-like")) {
-      liked = true;
-    }
-
-    likeButton.addEventListener("click", (event) => {
-      event.stopPropagation();
-      if (liked) {
-        likes--;
-      } else {
-        likes++;
-      }
-      liked = !liked;
-      likesCounter.textContent = likes;
-      commentElement.setAttribute("data-likeNumb", likes);
-      likeButton.classList.toggle("-active-like");
-    });
-  }
-};
-initEventListeners();
-
-//кнопка удаления комментария
-  export const initDeleteButtonsListeners = () => {
-  const deleteButtonsElements = document.querySelectorAll(".delete-button");
-
- for (const deleteButtonElement of deleteButtonsElements) {
- deleteButtonElement.addEventListener("click", (event) => {
-   event.stopPropagation();
-   const index = deleteButtonElement.dataset.index;
-   console.log(index);
-   comments.splice(index, 1);
- });
-}
-};
+   //Авторизация
+   const authorization = document.getElementById("regUser");
+   authorization.addEventListener("click", () => {
+    renderLogin();
+    buttonAuthorization.style.display = "none"
+   });
+  
 
 //формат даты
 const dateElement = document.getElementById("date");
 const myDate = new Date();
-formatDate();
+export const formatDate = (date) => {
+  let data = date.getDate();
+  let month = date.getMonth();
+  let hour = date.getHours();
+  let minute = date.getMinutes();
+
+  if (data < 10) {
+    data = "0" + data;
+  }
+  if (month < 10) {
+    month = "0" + (month + 1);
+  }
+  if (hour < 10) {
+    hour = "0" + hour;
+  }
+  return `${data}.${month}.${date.getFullYear().toString().substr(-2)} ${hour}:${minute}`;
+};
 dateElement.textContent = formatDate(myDate);
 
-
 // массив данных
- export let comments = [];
+export let comments = [];
 
 // рендер функция
-export const renderСomments = () => {
+const renderСomments = () => {
      const commentsHtml = comments.map((comment, index)=>{
       return`<li  class="comment"  data-likeNumb="${ comment.likes}"  data-comment-text="<${comment.text}
 (${comment.author.name})">
@@ -102,53 +71,31 @@ export const renderСomments = () => {
   
      newCommentElement.innerHTML = commentsHtml;
 
-//кнопка удаления комментария
-     const initDeleteButtonsListeners = () => {
-     const deleteButtonsElements = document.querySelectorAll(".delete-button");
-
-    for (const deleteButtonElement of deleteButtonsElements) {
-    deleteButtonElement.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const index = deleteButtonElement.dataset.index;
-      console.log(index);
-      comments.splice(index, 1);
-      renderСomments();
-    });
-  }
-};
-initDeleteButtonsListeners();
-initEventListeners();
 };    
-  renderСomments();
-  
-   //Авторизация
-   const authorization = document.getElementById("regUser");
-   authorization.addEventListener("click", () => {
-    renderLogin();
-   });
-  
+  //renderСomments();
 
 // отправляем данные на сервер (метод GET)
-const getFetchPromise = () => {
-getComments()
-.then((responseData) => {
-    loadComments.textContent = "";
-    const appComments = responseData.comments.map((comment) =>{
-        return{
-          name: comment.author.name,
-          date: new Date(comment.data),
-          text: comment.text,
-          likes: comment.likes,
-          isLiked : false
-        }
-      });  
-    comments = appComments;
-    comments = responseData.comments;
-    renderСomments()
-  });
-
-};
- getFetchPromise();
-// добавление нового коментария
-userComment ()
-console.log("It works!");
+ export const getFetchPromise = () => {
+  getComments()
+  .then((responseData) => {
+      loadComments.textContent = "";
+      const appComments = responseData.comments.map((comment) =>{
+          return{
+            name: comment.author.name,
+            date: new Date(comment.data),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked : false
+          }
+        });  
+      comments = appComments;
+      comments = responseData.comments;
+      renderСomments()
+    });
+  
+  };
+  
+   getFetchPromise();
+   
+   loader.textContent = "";
+   

@@ -1,4 +1,4 @@
-import {regUsers, setToken, token} from "./app.js"
+/*/import {regUsers, setToken, token} from "./app.js"
 
 export const renderRegistr = () => {
     const regElement = document.getElementById("reg");
@@ -51,4 +51,4 @@ buttonElement.addEventListener("click", () => {
     console.log(token);
 });
 });
-}
+}/*/
