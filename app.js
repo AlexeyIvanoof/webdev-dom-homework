@@ -6,11 +6,11 @@ const deleteCommentURL = "https://wedev-api.sky.pro/api/v2/aleksey-ivanov/commen
 export let token;
 export const setToken = (newToken) =>{
   token = newToken
-}
-
-export const setLoginName = (newName) =>{
+};
+export let name;
+export let setLoginName = (newName) =>{
   return name = newName;
-}
+};
 
 export function deleteComment({id}) {
   return fetch(deleteCommentURL +id, {
@@ -20,7 +20,7 @@ export function deleteComment({id}) {
    }).then((response) => {
      response.json()
     });
-}
+};
 
 export function getComments() {
     return fetch(commentsURL, {

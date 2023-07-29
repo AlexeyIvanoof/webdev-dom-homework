@@ -1,7 +1,5 @@
 import{getComments} from "./app.js"
 import{renderLogin} from "./login.js"
-//import{renderRegistr} from "./reg.js"
-//import{renderPage} from "./render.js"
 
 
 const newCommentElement = document.getElementById("container");
@@ -20,6 +18,7 @@ const buttonAuthorization = document.getElementById("regUser");
 //формат даты
 const dateElement = document.getElementById("date");
 const myDate = new Date();
+//formatDateToRu;
 export const formatDate = (date) => {
   let data = date.getDate();
   let month = date.getMonth();
@@ -37,19 +36,20 @@ export const formatDate = (date) => {
   }
   return `${data}.${month}.${date.getFullYear().toString().substr(-2)} ${hour}:${minute}`;
 };
-dateElement.textContent = formatDate(myDate);
+dateElement.textContent = formatDate(myDate); /*formatDateToRu(myDate);*/
 
 // массив данных
 export let comments = [];
 
 // рендер функция
+//export const country = "ru";
 const renderСomments = () => {
      const commentsHtml = comments.map((comment, index)=>{
       return`<li  class="comment"  data-likeNumb="${ comment.likes}"  data-comment-text="<${comment.text}
 (${comment.author.name})">
       <div class="comment-header">
         <div>${comment.author.name}</div>
-        <div>${comment.date}</div>
+        <div> ${comment.date}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">
@@ -72,7 +72,7 @@ const renderСomments = () => {
      newCommentElement.innerHTML = commentsHtml;
 
 };    
-  //renderСomments();
+  renderСomments();
 
 // отправляем данные на сервер (метод GET)
  export const getFetchPromise = () => {
@@ -82,7 +82,7 @@ const renderСomments = () => {
       const appComments = responseData.comments.map((comment) =>{
           return{
             name: comment.author.name,
-            date: new Date(comment.data),
+            date: new Date(comment.date),
             text: comment.text,
             likes: comment.likes,
             isLiked : false
@@ -96,6 +96,6 @@ const renderСomments = () => {
   };
   
    getFetchPromise();
-   
+
    loader.textContent = "";
    

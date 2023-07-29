@@ -1,5 +1,6 @@
-import {login, setToken, token} from "./app.js"
+import {login, setToken, token, name, setLoginName} from "./app.js"
 import {renderPage} from "./render.js"
+
 export const renderLogin = () => {
   const pageElement = document.getElementById("container");
     const loginHtml = 
@@ -42,7 +43,8 @@ login({
     console.log(responseData);
     console.log(token);
     setToken(responseData.user.token);
-    
+    setLoginName(responseData.user.name);
+    console.log(name);
 })
 .then(() => {
   return  renderPage();

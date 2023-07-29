@@ -1,8 +1,7 @@
-import { postComments,deleteComment } from "./app.js";
+import { postComments, name} from "./app.js";
 import { formatDate } from "./main.js";
-import { getFetchPromise } from "./main.js";
 import { comments } from "./main.js";
-import { setLoginName } from "./app.js";
+//import { formatDateToRu,formatDateToUs } from "./lib/formatDate/formatDate.js";
 
 // рендер страницы после авторизации
 
@@ -38,7 +37,7 @@ export const renderPage = () => {
       id="add-form-name"
       type="text"
       class="add-form-name"
-      placeholder="Введите ваше имя"
+      placeholder="${name}" value=${name} readonly
     />
     <textarea
       id="add-form-text"
@@ -54,11 +53,12 @@ export const renderPage = () => {
     pageElement.innerHTML = commentsHtml+addHtml ;
 
     const buttonElement = document.getElementById("add-form-button");
-    const inputNameElement = document.getElementById("add-form-name");
+    let inputNameElement = document.getElementById("add-form-name");
     const commentsElement = document.getElementById("add-form-text");
     const loadComment =  document.getElementById("add-form");
     const loader =  document.getElementById("loader");
-    const myDate = new Date();
+    const myDate = new Date();      
+
 
     const initEventListeners = () => {
       const commentElements = document.querySelectorAll(".comment");
@@ -147,10 +147,8 @@ buttonElement.addEventListener("click", () => {
   postComments({
     nam:inputNameElement.value,
     text: commentsElement.value, 
-    date: `${formatDate(myDate)}`})
-    .then(() => {
-    })
-
+    date: `${formatDate(myDate)}`
+  })  
     .then(() => {
       loadComment.style.display = "block";
       loader.textContent = "";
@@ -175,9 +173,7 @@ buttonElement.addEventListener("click", () => {
       })} 
       console.warn(error);
     });
-  
 });
 };    
-
 
 
