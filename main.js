@@ -42,10 +42,14 @@ dateElement.textContent = formatDate(myDate); /*formatDateToRu(myDate);*/
 export let comments = [];
 
 // рендер функция
-//export const country = "ru";
+
+const now = new Date();
+
+format(now, 'YYYY-MM-DD hh.mm.ss'); 
+
 const renderСomments = () => {
      const commentsHtml = comments.map((comment, index)=>{
-      const createDate = format(new Date(comment.created_at), 'dd/MM/yyyy hh:mm');
+      const createDate = format(now(comment.created_at), 'YYYY-MM-DD hh.mm.ss');
       return`<li  class="comment"  data-likeNumb="${ comment.likes}"  data-comment-text="<${comment.text}
 (${comment.author.name})">
       <div class="comment-header">
@@ -83,7 +87,7 @@ const renderСomments = () => {
       const appComments = responseData.comments.map((comment) =>{
           return{
             name: comment.author.name,
-            date: new Date(comment.created_at),
+            date: now(comment.created_at),
             text: comment.text,
             likes: comment.likes,
             isLiked : false

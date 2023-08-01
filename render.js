@@ -1,13 +1,14 @@
 import { postComments, name} from "./app.js";
-//import { formatDate } from "./main.js";
 import { comments } from "./main.js";
-//import { formatDateToRu,formatDateToUs } from "./lib/formatDate/formatDate.js";
 import { format } from "date-fns"
+
+
 // рендер страницы после авторизации
 
 export const renderPage = () => {
     const pageElement = document.getElementById("container");
     const commentsHtml = comments.map((comment, index)=>{
+      const createDate = format(now(comment.created_at), 'YYYY-MM-DD hh.mm.ss');
       return`<li  class="comment"  data-likeNumb="${ comment.likes}"  data-comment-text="<${comment.text}
 (${comment.author.name})">
       <div class="comment-header">
