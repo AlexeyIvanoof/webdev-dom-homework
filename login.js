@@ -22,7 +22,7 @@ export const renderLogin = () => {
           <div class="add-form-enter">
             <button id="login-button" class="add-form-button">Войти</button>
           </div>
-          <a class="reg-enter" href="reg.html">Регистрация</a>
+          <a class="reg-enter" href="#">Регистрация</a>
     </div>
 </div>`;
 

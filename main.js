@@ -1,6 +1,6 @@
 import{getComments} from "./app.js"
 import{renderLogin} from "./login.js"
-
+import { format } from "date-fns"
 
 const newCommentElement = document.getElementById("container");
 const loadComments =  document.getElementById("load");
@@ -16,7 +16,7 @@ const buttonAuthorization = document.getElementById("regUser");
   
 
 //формат даты
-const dateElement = document.getElementById("date");
+/*/const dateElement = document.getElementById("date");
 const myDate = new Date();
 //formatDateToRu;
 export const formatDate = (date) => {
@@ -45,11 +45,12 @@ export let comments = [];
 //export const country = "ru";
 const renderСomments = () => {
      const commentsHtml = comments.map((comment, index)=>{
+      const createDate = format(new Date(comment.created_at), 'dd/MM/yyyy hh:mm');
       return`<li  class="comment"  data-likeNumb="${ comment.likes}"  data-comment-text="<${comment.text}
 (${comment.author.name})">
       <div class="comment-header">
         <div>${comment.author.name}</div>
-        <div> ${comment.date}</div>
+        <div>${createDate}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">
@@ -82,7 +83,7 @@ const renderСomments = () => {
       const appComments = responseData.comments.map((comment) =>{
           return{
             name: comment.author.name,
-            date: new Date(comment.date),
+            date: new Date(comment.created_at),
             text: comment.text,
             likes: comment.likes,
             isLiked : false

@@ -1,8 +1,8 @@
 import { postComments, name} from "./app.js";
-import { formatDate } from "./main.js";
+//import { formatDate } from "./main.js";
 import { comments } from "./main.js";
 //import { formatDateToRu,formatDateToUs } from "./lib/formatDate/formatDate.js";
-
+import { format } from "date-fns"
 // рендер страницы после авторизации
 
 export const renderPage = () => {
@@ -12,7 +12,7 @@ export const renderPage = () => {
 (${comment.author.name})">
       <div class="comment-header">
         <div>${comment.author.name}</div>
-        <div>${comment.date}</div>
+        <div>${createDate}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">
@@ -57,7 +57,7 @@ export const renderPage = () => {
     const commentsElement = document.getElementById("add-form-text");
     const loadComment =  document.getElementById("add-form");
     const loader =  document.getElementById("loader");
-    const myDate = new Date();      
+         
 
 
     const initEventListeners = () => {
@@ -147,9 +147,9 @@ buttonElement.addEventListener("click", () => {
   postComments({
     nam:inputNameElement.value,
     text: commentsElement.value, 
-    date: `${formatDate(myDate)}`
+    date:`${createDate}`
   })  
-    .then(() => {
+    .then((response) => {
       loadComment.style.display = "block";
       loader.textContent = "";
       inputNameElement.value = "";
