@@ -1,6 +1,8 @@
 import{getComments} from "./app.js"
+//import { formatDateToRu } from "./lib/formatDate/formatDate.js";
 import{renderLogin} from "./login.js"
-import { format } from "date-fns"
+import { format } from "date-fns";
+
 
 const newCommentElement = document.getElementById("container");
 const loadComments =  document.getElementById("load");
@@ -39,17 +41,16 @@ export const formatDate = (date) => {
 dateElement.textContent = formatDate(myDate); /*formatDateToRu(myDate);*/
 
 // массив данных
-export let comments = [];
+
 
 // рендер функция
 
-const now = new Date();
-
-format(now, 'YYYY-MM-DD hh.mm.ss'); 
+export let comments = [];
+let createDate;
 
 const renderСomments = () => {
      const commentsHtml = comments.map((comment, index)=>{
-      const createDate = format(now(comment.created_at), 'YYYY-MM-DD hh.mm.ss');
+      createDate = format(new Date(comment.date), 'dd.MM.yy hh:mm');
       return`<li  class="comment"  data-likeNumb="${ comment.likes}"  data-comment-text="<${comment.text}
 (${comment.author.name})">
       <div class="comment-header">
@@ -80,14 +81,15 @@ const renderСomments = () => {
   renderСomments();
 
 // отправляем данные на сервер (метод GET)
- export const getFetchPromise = () => {
+  export const getFetchPromise = () => {
+    console.log('i work 2')
   getComments()
   .then((responseData) => {
       loadComments.textContent = "";
       const appComments = responseData.comments.map((comment) =>{
           return{
             name: comment.author.name,
-            date: now(comment.created_at),
+            date: format(new Date(comment.date)),
             text: comment.text,
             likes: comment.likes,
             isLiked : false
