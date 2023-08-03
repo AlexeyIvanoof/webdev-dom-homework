@@ -9,7 +9,7 @@ let createDate;
 export const renderPage = () => {
   const pageElement = document.getElementById("container");
   const commentsHtml = comments.map((comment, index) => {
-    createDate = format(new Date(comment.date),'dd.MM.yy hh:mm')
+    createDate = format(new Date(comment.date),'YYYY-MM-DD hh:mm:ss')
     return `<li  class="comment"  data-likeNumb="${comment.likes}"  data-comment-text="<${comment.text}
 (${comment.author.name})">
       <div class="comment-header">
