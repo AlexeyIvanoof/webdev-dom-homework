@@ -1,6 +1,8 @@
 import{getComments} from "./app.js"
+//import { formatDateToRu } from "./lib/formatDate/formatDate.js";
 import{renderLogin} from "./login.js"
-import { format } from "date-fns"
+import { format } from "date-fns";
+
 
 const newCommentElement = document.getElementById("container");
 const loadComments =  document.getElementById("load");
@@ -14,38 +16,19 @@ const buttonAuthorization = document.getElementById("regUser");
     buttonAuthorization.style.display = "none"
    });
   
-
-//формат даты
-/*/const dateElement = document.getElementById("date");
-const myDate = new Date();
-//formatDateToRu;
-export const formatDate = (date) => {
-  let data = date.getDate();
-  let month = date.getMonth();
-  let hour = date.getHours();
-  let minute = date.getMinutes();
-
-  if (data < 10) {
-    data = "0" + data;
-  }
-  if (month < 10) {
-    month = "0" + (month + 1);
-  }
-  if (hour < 10) {
-    hour = "0" + hour;
-  }
-  return `${data}.${month}.${date.getFullYear().toString().substr(-2)} ${hour}:${minute}`;
-};
-dateElement.textContent = formatDate(myDate); /*formatDateToRu(myDate);*/
+   
 
 // массив данных
 export let comments = [];
 
 // рендер функция
-//export const country = "ru";
+
+
+let createDate;
+
 const renderСomments = () => {
      const commentsHtml = comments.map((comment, index)=>{
-      const createDate = format(new Date(comment.created_at), 'dd/MM/yyyy hh:mm');
+      createDate = format(new Date(comment.date), 'yyyy-MM-dd hh:mm:ss');
       return`<li  class="comment"  data-likeNumb="${ comment.likes}"  data-comment-text="<${comment.text}
 (${comment.author.name})">
       <div class="comment-header">
@@ -76,14 +59,15 @@ const renderСomments = () => {
   renderСomments();
 
 // отправляем данные на сервер (метод GET)
- export const getFetchPromise = () => {
+  export const getFetchPromise = () => {
+    console.log('i work 2')
   getComments()
   .then((responseData) => {
       loadComments.textContent = "";
       const appComments = responseData.comments.map((comment) =>{
           return{
             name: comment.author.name,
-            date: new Date(comment.created_at),
+            date: format(new Date(comment.date),'yyyy-MM-dd hh:mm:ss'),
             text: comment.text,
             likes: comment.likes,
             isLiked : false
